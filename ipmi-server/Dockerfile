@@ -49,6 +49,17 @@ RUN chmod -R 777 /app/var/
 # Copy root filesystem
 COPY rootfs /
 
+# Run composer and cleanup afterwards
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+RUN apk -U add --no-cache \
+    php$PHPVERS-phar \
+    php$PHPVERS-mbstring && \
+    php82 /usr/bin/composer --working-dir /app install && \
+    apk -U del \
+      php$PHPVERS-phar \
+      php$PHPVERS-mbstring && \
+    rm /usr/bin/composer
+
 # Corrects permissions for /app directory
 RUN if [ -d /app ]; then chown -R nginx /app; fi
 RUN chown -R nginx /var/lib/nginx
