@@ -35,16 +35,9 @@ RUN apk -U add --no-cache \
     php$PHPVERS-ctype \
     php$PHPVERS-session \
     php$PHPVERS-tokenizer \
-    php$PHPVERS-opcache
-#    php$PHPVERS-mbstring \
-#    php$PHPVERS-curl \
-#    php$PHPVERS-dom \
-#    php$PHPVERS-xml \
-#    php$PHPVERS-simplexml \
-#    php$PHPVERS-gettext \
-#    php$PHPVERS-zip \
-#    php$PHPVERS-zlib \
-#    php$PHPVERS-gd \
+    php$PHPVERS-opcache \
+    php$PHPVERS-iconv \
+    php$PHPVERS-xml
 
 RUN mkdir -p /app \
     && mkdir -p /app/cache \
@@ -55,6 +48,17 @@ RUN chmod -R 777 /app/var/
 
 # Copy root filesystem
 COPY rootfs /
+
+# Run composer and cleanup afterwards
+COPY --from=composer /usr/bin/composer /usr/bin/composer
+RUN apk -U add --no-cache \
+    php$PHPVERS-phar \
+    php$PHPVERS-mbstring && \
+    php82 /usr/bin/composer --working-dir /app install && \
+    apk -U del \
+      php$PHPVERS-phar \
+      php$PHPVERS-mbstring && \
+    rm /usr/bin/composer
 
 # Corrects permissions for /app directory
 RUN if [ -d /app ]; then chown -R nginx /app; fi
