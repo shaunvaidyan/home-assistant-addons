@@ -1,4 +1,11 @@
-### 1.2.16
+## 2.0.0
+
+- GH-22 Anonymize password in error output by @func0der
+- Let nginx also listen IPv6 Port by @LostAttractor 
+- Remove vendor folder from repo and build it during docker build by @func0der 
+- Gh 19 add docker build by @func0der 
+
+## 1.2.16
 
 - update docker image to ghcr.io/hassio-addons/base:19.0.0
 - php 8.2
